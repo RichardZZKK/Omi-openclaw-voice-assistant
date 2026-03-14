@@ -20,7 +20,6 @@ import os
 import subprocess
 import hashlib
 import tempfile
-import threading
 import time
 import wave
 from collections import deque
@@ -185,6 +184,7 @@ QWEN_TTS_X_VECTOR_ONLY = os.getenv("QWEN_TTS_X_VECTOR_ONLY", "true").strip().low
 TTS_BACKEND = os.getenv("OMI_VOICE_COMPANION_TTS_BACKEND", "auto").strip().lower() or "auto"
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY) if ELEVENLABS_API_KEY else None
 qwen_model = None
+qwen_model_loading = False
 
 
 def get_tts_cache_path(text: str, backend: str, suffix: str) -> Path:
@@ -228,9 +228,11 @@ def ensure_elevenlabs_audio(text: str) -> Path | None:
 
 
 def load_qwen_tts_model():
-    global qwen_model
+    global qwen_model, qwen_model_loading
     if qwen_model is not None:
         return qwen_model
+    if qwen_model_loading:
+        raise RuntimeError("Qwen3-TTS is still loading, please try again in a moment")
     if not QWEN_TTS_REF_AUDIO:
         raise RuntimeError("QWEN_TTS_REF_AUDIO is not configured")
     try:
@@ -240,13 +242,17 @@ def load_qwen_tts_model():
         raise RuntimeError(f"qwen-tts is not installed: {exc}") from exc
 
     device = "mps" if torch.backends.mps.is_available() else "cpu"
-    qwen_model = Qwen3TTSModel.from_pretrained(
-        QWEN_TTS_MODEL,
-        device_map=device,
-        dtype=torch.float32,
-        attn_implementation="eager",
-    )
-    return qwen_model
+    qwen_model_loading = True
+    try:
+        qwen_model = Qwen3TTSModel.from_pretrained(
+            QWEN_TTS_MODEL,
+            device_map=device,
+            dtype=torch.float32,
+            attn_implementation="eager",
+        )
+        return qwen_model
+    finally:
+        qwen_model_loading = False
 
 
 def ensure_qwen_audio(text: str) -> Path | None:
@@ -280,14 +286,6 @@ def ensure_qwen_audio(text: str) -> Path | None:
 
 def ensure_tts_audio(text: str) -> Path | None:
     backend = get_effective_tts_backend()
-    if backend == "qwen":
-        def _preload_qwen() -> None:
-            try:
-                load_qwen_tts_model()
-                print("ℹ️ Qwen3-TTS 模型已预加载") if "voice_companion.py" in __file__ else print("ℹ️ Qwen3-TTS model preloaded")
-            except Exception as exc:
-                print(f"Qwen preload error: {exc}")
-        threading.Thread(target=_preload_qwen, daemon=True).start()
     if backend == "elevenlabs":
         return ensure_elevenlabs_audio(text)
     if backend == "qwen":
