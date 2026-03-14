@@ -22,7 +22,7 @@ Use this skill when the task involves Omi's local voice companion on macOS.
 
 ## Project path
 By default the scripts look for the voice project in one of these places:
-- `$OMI_VOICE_ASSISTANT_DIR`
+- `$OMI_VOICE_COMPANION_DIR`
 - `$HOME/Esetting/omi-voice-companion`
 - a sibling folder named `omi-voice-companion`
 
