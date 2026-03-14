@@ -111,6 +111,11 @@ If you want to turn it into your own named companion, the usual approach is:
 - change the wake phrases to the name you want to use
 - update the spoken prompts to match the personality you want
 
+## Bundled OpenClaw Skill
+
+This project also includes a reusable OpenClaw skill at `openclaw-skill/voice-assistant`.
+If you want to maintain the voice companion as an OpenClaw add-on inside the main repository, you can build on that bundled skill directly.
+
 ## Run modes
 ### Chinese version
 File: `voice_assistant.py`

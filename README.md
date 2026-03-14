@@ -109,6 +109,11 @@ export ELEVENLABS_VOICE_ID="your_voice_id"
 - 把唤醒词改成你想叫它的名字
 - 把脚本里的提示语改成你希望它说的话
 
+## 附带 OpenClaw Skill
+
+项目内已经附带一份可直接复用的 OpenClaw skill：`openclaw-skill/voice-assistant`。
+如果你希望把这个语音伙伴作为 OpenClaw 的附属能力一起维护，可以直接基于这里的 skill 结构继续修改。
+
 ## 运行方式
 ### 中文版
 文件：`voice_assistant.py`
