@@ -148,4 +148,4 @@ python3 voice_assistant_en.py --list-devices
 ```
 
 ## Author
-- Ric4
+- RichardZZKK

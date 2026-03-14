@@ -146,4 +146,4 @@ python3 voice_assistant_en.py --list-devices
 ```
 
 ## 作者
-- Ric4
+- RichardZZKK
