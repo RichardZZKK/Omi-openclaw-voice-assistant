@@ -94,6 +94,22 @@ Getting an API key is simple:
 You can also choose, create, or clone the voice you want here:
 - [https://elevenlabs.io](https://elevenlabs.io)
 
+## Optional configuration
+If you want to change the companion name, prompts, or wake phrases, edit the script files directly:
+
+- Chinese version: `voice_assistant.py`
+- English version: `voice_assistant_en.py`
+
+The most common places to customize are:
+- `WAKE_PHRASES`: change the wake phrases
+- `EXIT_PHRASES`: change the exit phrases
+- Spoken prompt text: lines such as “我在”, “我没有听清”, or “让我想想” in the Chinese script, and their English equivalents in the English script
+
+If you want to turn it into your own named companion, the usual approach is:
+- change the wake phrases to the name you want to use
+- update the spoken prompts to match the personality you want
+- optionally update the README wording to match your customized version
+
 ## Run modes
 ### Chinese version
 File: `voice_assistant.py`

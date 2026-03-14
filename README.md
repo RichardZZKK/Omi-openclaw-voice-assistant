@@ -92,6 +92,22 @@ export ELEVENLABS_VOICE_ID="your_voice_id"
 你也可以在 ElevenLabs 这里选择、创建，或者克隆你想要的音色：
 - [https://elevenlabs.io](https://elevenlabs.io)
 
+## 可选配置
+如果你想改伙伴名字、提示词或唤醒词，可以直接编辑脚本文件：
+
+- 中文版：`voice_assistant.py`
+- 英文版：`voice_assistant_en.py`
+
+常见需要改的内容包括：
+- `WAKE_PHRASES`：修改唤醒词
+- `EXIT_PHRASES`：修改退出口令
+- 语音提示文本：例如“我在”、“我没有听清”、“让我想想”这些提示语
+
+如果你想把它改成自己的伙伴名字，最常见的做法是：
+- 把唤醒词改成你想叫它的名字
+- 把脚本里的提示语改成你希望它说的话
+- 如果需要，也可以同步修改 README 里的项目说明
+
 ## 运行方式
 ### 中文版
 文件：`voice_assistant.py`
