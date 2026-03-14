@@ -23,7 +23,6 @@ Note:
 - Local speech recognition using macOS Speech.framework
 - Voice activity detection for automatic end-of-command capture
 - ElevenLabs TTS with caching, with automatic fallback to macOS `say`
-- 5-second follow-up window after each reply for more natural conversations
 
 ## Requirements
 - macOS
@@ -33,9 +32,106 @@ Note:
 - `swiftc` available
 
 ## Install
+Follow these steps in order. This section is written for first-time users.
+
+### 1. Open Terminal
+On macOS, open `Terminal`.
+
+The quickest way:
+- Press `Command + Space`
+- Type `Terminal`
+- Press Enter
+
+### 2. Go to the project folder
+If you already downloaded the project, move into the folder first:
+
+```bash
+cd /path/to/omi-voice-assistant
+```
+
+If you are not sure whether you are in the right folder, run:
+```bash
+pwd
+ls
+```
+
+You should see files like:
+- `voice_assistant.py`
+- `voice_assistant_en.py`
+- `requirements.txt`
+
+### 3. Check that Python 3 is available
+Run:
+
+```bash
+python3 --version
+```
+
+If you see something like:
+
+```bash
+Python 3.11.x
+```
+
+then Python 3 is available.
+
+### 4. Check that pip3 is available
+Run:
+
+```bash
+pip3 --version
+```
+
+If it shows a version number, `pip3` is ready.
+
+### 5. Install dependencies
+From the project folder, run:
+
 ```bash
 pip3 install -r requirements.txt
 ```
+
+After a successful install, you will usually see:
+- `Successfully installed ...`
+
+### 6. If you get a permission error
+If you see something like `Permission denied` or `externally-managed-environment`, use:
+
+```bash
+python3 -m pip install --user -r requirements.txt
+```
+
+This installs packages into your user directory and is usually the safest option.
+
+### 7. If a package install fails
+Try upgrading pip first, then retry:
+
+```bash
+python3 -m pip install --upgrade pip
+python3 -m pip install --user -r requirements.txt
+```
+
+### 8. Verify the install
+After installation, test the microphone listing:
+
+```bash
+python3 voice_assistant.py --list-devices
+```
+
+If you can see your microphone devices, the core dependencies are likely installed correctly.
+
+### 9. macOS permissions on first run
+The first time you run the assistant, macOS may ask for permissions.
+
+Allow:
+- `Microphone`
+- `Speech Recognition` (if prompted)
+
+If nothing pops up, check manually:
+- `System Settings -> Privacy & Security -> Microphone`
+- `System Settings -> Privacy & Security -> Speech Recognition`
+
+Make sure `Terminal` is allowed.
 
 ## Optional configuration
 For ElevenLabs voice output:
@@ -86,8 +182,6 @@ English version:
 ```bash
 python3 voice_assistant_en.py --list-devices
 ```
-
-## Notes
 
 ## Author
 - Ric4

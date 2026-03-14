@@ -21,7 +21,6 @@ English version: [README_EN.md](./README_EN.md)
 - 基于 macOS Speech.framework 的本地语音识别
 - 语音活动检测（VAD）自动结束录音
 - ElevenLabs TTS 缓存播放，未配置时自动回退到 macOS `say`
-- 每次回答后保留 5 秒连续对话窗口，可直接追问
 
 ## 环境要求
 - macOS
@@ -31,9 +30,108 @@ English version: [README_EN.md](./README_EN.md)
 - 系统可用 `swiftc`
 
 ## 安装
+下面这套步骤按顺序做，小白也可以直接照着执行。
+
+### 1. 打开终端
+在 macOS 里打开 `Terminal`。
+
+最常用的方法：
+- 按 `Command + Space`
+- 输入 `Terminal`
+- 回车
+
+### 2. 进入项目目录
+如果你已经把项目下载到本地，先进入项目目录：
+
+```bash
+cd /你的项目路径/omi-voice-assistant
+```
+
+如果你已经在这个项目目录里，可以用下面命令确认：
+```bash
+pwd
+ls
+```
+
+你应该能看到这些文件：
+- `voice_assistant.py`
+- `voice_assistant_en.py`
+- `requirements.txt`
+
+### 3. 确认 Python 3 可用
+运行：
+
+```bash
+python3 --version
+```
+
+如果看到类似：
+
+```bash
+Python 3.11.x
+```
+
+说明 Python 3 已经可用。
+
+如果这里报错，先安装 Python 3，再继续下面步骤。
+
+### 4. 确认 pip3 可用
+运行：
+
+```bash
+pip3 --version
+```
+
+如果能看到版本号，说明 `pip3` 可用。
+
+### 5. 安装依赖
+在项目目录里运行：
+
 ```bash
 pip3 install -r requirements.txt
 ```
+
+安装成功后，通常会看到类似：
+- `Successfully installed ...`
+
+### 6. 如果安装时报权限错误
+如果你看到类似 `Permission denied` 或 `externally-managed-environment`，优先用下面这个方式：
+
+```bash
+python3 -m pip install --user -r requirements.txt
+```
+
+这样会把依赖安装到你自己的用户目录里，通常更稳。
+
+### 7. 如果安装时报某个包失败
+你可以先升级 pip 再重试：
+
+```bash
+python3 -m pip install --upgrade pip
+python3 -m pip install --user -r requirements.txt
+```
+
+### 8. 验证安装是否完成
+安装完后，你可以先测试列出麦克风设备：
+
+```bash
+python3 voice_assistant.py --list-devices
+```
+
+如果能看到设备列表，说明核心依赖基本已经装好了。
+
+### 9. 首次运行时的系统权限
+第一次运行语音助手时，macOS 可能会弹出权限请求。
+
+你需要允许：
+- `麦克风`
+- `语音识别`（如果系统弹出）
+
+如果没有弹窗，也可以手动去这里检查：
+- `系统设置 -> 隐私与安全性 -> 麦克风`
+- `系统设置 -> 隐私与安全性 -> 语音识别`
+
+确保 `Terminal` 已被允许。
 
 ## 可选配置
 如果你想使用 ElevenLabs 音色：
@@ -84,8 +182,6 @@ python3 voice_assistant.py --list-devices
 ```bash
 python3 voice_assistant_en.py --list-devices
 ```
-
-## 说明
 
 ## 作者
 - Ric4
