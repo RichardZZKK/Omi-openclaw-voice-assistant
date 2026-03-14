@@ -2,6 +2,12 @@
 
 A local macOS voice front-end for OpenClaw.
 
+This project helps **OpenClaw on macOS** become more than a text-based assistant by giving it a real voice.  
+You can not only talk to it, but also decide how it sounds: choose a voice you like, clone a character voice you want, or shape it into the speaking companion you imagine.  
+
+Note:
+- If you are using a **Mac mini**, you will need an external microphone because the machine does not include a built-in mic.
+
 中文版: [README.md](./README.md)
 
 ## Features
