@@ -86,4 +86,6 @@ python3 voice_assistant_en.py --list-devices
 ```
 
 ## 说明
-- 语音回复结束后，会继续保留 5 秒追问窗口，这段时间里不需要再次说唤醒词。
+
+## 作者
+- Ric4

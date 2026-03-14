@@ -88,4 +88,6 @@ python3 voice_assistant_en.py --list-devices
 ```
 
 ## Notes
-- After each spoken reply, the assistant stays in follow-up mode for 5 seconds so you can continue without repeating the wake phrase.
+
+## Author
+- Ric4
