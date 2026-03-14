@@ -32,7 +32,7 @@ Note:
 - `swiftc` available
 
 ## Install
-Clone the project first:
+Clone the project and enter the folder:
 
 ```bash
 git clone git@github.com:RichardZZKK/Omi-openclaw-voice-assistant.git
@@ -44,18 +44,6 @@ If you prefer HTTPS, you can use:
 ```bash
 git clone https://github.com/RichardZZKK/Omi-openclaw-voice-assistant.git
 cd Omi-openclaw-voice-assistant
-```
-
-Check that Python 3 is available:
-
-```bash
-python3 --version
-```
-
-Check that `pip3` is available:
-
-```bash
-pip3 --version
 ```
 
 Install dependencies:
@@ -76,14 +64,6 @@ If a package install fails, try upgrading `pip` first and then retry:
 python3 -m pip install --upgrade pip
 python3 -m pip install --user -r requirements.txt
 ```
-
-After installation, verify the microphone listing:
-
-```bash
-python3 voice_assistant.py --list-devices
-```
-
-If you can see your microphone devices, the core dependencies are likely installed correctly.
 
 The first time you run the assistant, macOS may ask for permissions.
 

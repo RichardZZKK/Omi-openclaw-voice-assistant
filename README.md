@@ -30,7 +30,7 @@ English version: [README_EN.md](./README_EN.md)
 - 系统可用 `swiftc`
 
 ## 安装
-先把项目拉到本地：
+拉到本地并进入目录：
 
 ```bash
 git clone git@github.com:RichardZZKK/Omi-openclaw-voice-assistant.git
@@ -42,18 +42,6 @@ cd Omi-openclaw-voice-assistant
 ```bash
 git clone https://github.com/RichardZZKK/Omi-openclaw-voice-assistant.git
 cd Omi-openclaw-voice-assistant
-```
-
-确认 Python 3 可用：
-
-```bash
-python3 --version
-```
-
-确认 `pip3` 可用：
-
-```bash
-pip3 --version
 ```
 
 安装依赖：
@@ -75,21 +63,13 @@ python3 -m pip install --upgrade pip
 python3 -m pip install --user -r requirements.txt
 ```
 
-安装完成后，可以先测试麦克风设备列表：
-
-```bash
-python3 voice_assistant.py --list-devices
-```
-
-如果能看到设备列表，说明核心依赖基本已经装好。
-
-第一次运行语音助手时，macOS 可能会弹出权限请求。
+第一次运行时，macOS 可能会弹出权限请求。
 
 你需要允许：
 - `麦克风`
 - `语音识别`（如果系统弹出）
 
-如果没有弹窗，也可以手动去这里检查：
+如果没有弹窗，也可以手动检查：
 - `系统设置 -> 隐私与安全性 -> 麦克风`
 - `系统设置 -> 隐私与安全性 -> 语音识别`
 
