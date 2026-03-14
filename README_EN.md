@@ -8,10 +8,12 @@ A local macOS voice front-end for OpenClaw.
 - **ElevenLabs support for more natural, expressive, and character-like voice output**
 - **Custom and cloned voices, as long as you have suitable voice sample material**
 - **Both Chinese and English script variants for different usage scenarios**
+- **You can later rename the companion and change prompts or wake phrases to fit your own style**
 - **A 5-second follow-up window after each reply for more natural conversations**
 
 This project helps **OpenClaw on macOS** become more than a text-based assistant by giving it a real voice.  
 You can not only talk to it, but also decide how it sounds: choose a voice you like, clone a character voice you want, or shape it into the speaking companion you imagine.  
+You can also keep customizing the companion's name, prompts, and wake phrases over time so it becomes your own version of a voice companion.  
 
 Note:
 - If you are using a **Mac mini**, you will need an external microphone because the machine does not include a built-in mic.
