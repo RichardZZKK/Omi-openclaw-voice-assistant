@@ -1,4 +1,4 @@
-# Omi OpenClaw Voice Assistant 中文语音助手
+# OpenClaw Voice 伙伴 语音伙伴模块-Omi
 
 一个运行在 macOS 上的本地语音前端，用来把语音输入接到 OpenClaw。
 
