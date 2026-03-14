@@ -82,6 +82,8 @@ export ELEVENLABS_API_KEY="your_key"
 export ELEVENLABS_VOICE_ID="your_voice_id"
 ```
 
+当前默认使用的 ElevenLabs TTS 模型是：`eleven_v3`
+
 如果没有配置上述变量，项目会自动回退到 macOS `say`，但就无法使用更生动、更自然、可自定义或可克隆的音色。
 
 获取 API key 的方式很简单：

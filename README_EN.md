@@ -84,6 +84,8 @@ export ELEVENLABS_API_KEY="your_key"
 export ELEVENLABS_VOICE_ID="your_voice_id"
 ```
 
+The current default ElevenLabs TTS model is: `eleven_v3`
+
 If these variables are missing, the assistant falls back to macOS `say`, but you will lose the more expressive, natural, customizable, and cloneable voice options.
 
 Getting an API key is simple:
