@@ -29,6 +29,10 @@ import sounddevice as sd
 
 ROOT = Path(__file__).resolve().parent
 CACHE_DIR = ROOT / ".voice_cache"
+HOMEBREW_BIN = "/opt/homebrew/bin"
+if HOMEBREW_BIN not in os.environ.get("PATH", ""):
+    os.environ["PATH"] = HOMEBREW_BIN + ":" + os.environ.get("PATH", "")
+
 SAMPLE_RATE = 16_000
 CHANNELS = 1
 BLOCKSIZE = 1024
