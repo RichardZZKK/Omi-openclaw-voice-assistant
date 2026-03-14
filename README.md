@@ -97,8 +97,8 @@ export ELEVENLABS_VOICE_ID="your_voice_id"
 ## 可选配置
 如果你想改伙伴名字、提示词或唤醒词，可以直接编辑脚本文件：
 
-- 中文版：`voice_assistant.py`
-- 英文版：`voice_assistant_en.py`
+- 中文版：`voice_companion.py`
+- 英文版：`voice_companion_en.py`
 
 常见需要改的内容包括：
 - `WAKE_PHRASES`：修改唤醒词
@@ -116,7 +116,7 @@ export ELEVENLABS_VOICE_ID="your_voice_id"
 
 ## 运行方式
 ### 中文版
-文件：`voice_assistant.py`
+文件：`voice_companion.py`
 
 默认特性：
 - 唤醒词：`hi omi` / `omi` / `欧米`
@@ -125,11 +125,11 @@ export ELEVENLABS_VOICE_ID="your_voice_id"
 
 启动：
 ```bash
-python3 voice_assistant.py --device 1
+python3 voice_companion.py --device 1
 ```
 
 ### 英文版
-文件：`voice_assistant_en.py`
+文件：`voice_companion_en.py`
 
 默认特性：
 - Wake phrases: `hi omi` / `hey omi` / `omi`
@@ -138,18 +138,18 @@ python3 voice_assistant.py --device 1
 
 启动：
 ```bash
-python3 voice_assistant_en.py --device 1
+python3 voice_companion_en.py --device 1
 ```
 
 ## 查看麦克风设备
 中文版：
 ```bash
-python3 voice_assistant.py --list-devices
+python3 voice_companion.py --list-devices
 ```
 
 英文版：
 ```bash
-python3 voice_assistant_en.py --list-devices
+python3 voice_companion_en.py --list-devices
 ```
 
 ## 作者

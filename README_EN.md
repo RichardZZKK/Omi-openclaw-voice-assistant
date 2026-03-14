@@ -99,8 +99,8 @@ You can also choose, create, or clone the voice you want here:
 ## Optional configuration
 If you want to change the companion name, prompts, or wake phrases, edit the script files directly:
 
-- Chinese version: `voice_assistant.py`
-- English version: `voice_assistant_en.py`
+- Chinese version: `voice_companion.py`
+- English version: `voice_companion_en.py`
 
 The most common places to customize are:
 - `WAKE_PHRASES`: change the wake phrases
@@ -118,7 +118,7 @@ If you want to maintain the voice companion as an OpenClaw add-on inside the mai
 
 ## Run modes
 ### Chinese version
-File: `voice_assistant.py`
+File: `voice_companion.py`
 
 Defaults:
 - Wake phrases: `hi omi` / `omi` / `欧米`
@@ -127,11 +127,11 @@ Defaults:
 
 Run:
 ```bash
-python3 voice_assistant.py --device 1
+python3 voice_companion.py --device 1
 ```
 
 ### English version
-File: `voice_assistant_en.py`
+File: `voice_companion_en.py`
 
 Defaults:
 - Wake phrases: `hi omi` / `hey omi` / `omi`
@@ -140,18 +140,18 @@ Defaults:
 
 Run:
 ```bash
-python3 voice_assistant_en.py --device 1
+python3 voice_companion_en.py --device 1
 ```
 
 ## List microphones
 Chinese version:
 ```bash
-python3 voice_assistant.py --list-devices
+python3 voice_companion.py --list-devices
 ```
 
 English version:
 ```bash
-python3 voice_assistant_en.py --list-devices
+python3 voice_companion_en.py --list-devices
 ```
 
 ## Author

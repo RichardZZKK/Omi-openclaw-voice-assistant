@@ -1,8 +1,8 @@
 #!/bin/zsh
 set -euo pipefail
 
-VOICE_SCRIPT="${OMI_VOICE_ASSISTANT_SCRIPT:-voice_assistant.py}"
-DEVICE="${OMI_VOICE_ASSISTANT_DEVICE:-1}"
+VOICE_SCRIPT="${OMI_VOICE_COMPANION_SCRIPT:-voice_companion.py}"
+DEVICE="${OMI_VOICE_COMPANION_DEVICE:-1}"
 
 pkill -f "python3 $VOICE_SCRIPT --device $DEVICE" || true
 pkill -f "/Python .*${VOICE_SCRIPT} --device ${DEVICE}" || true

@@ -4,9 +4,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEFAULT_HOME_PROJECT="$HOME/Esetting/omi-voice-companion"
 DEFAULT_SIBLING_PROJECT="$(cd "$SCRIPT_DIR/../../.." && pwd)/omi-voice-companion"
-PROJECT_DIR="${OMI_VOICE_ASSISTANT_DIR:-}"
-VOICE_SCRIPT="${OMI_VOICE_ASSISTANT_SCRIPT:-voice_assistant.py}"
-DEVICE="${OMI_VOICE_ASSISTANT_DEVICE:-1}"
+PROJECT_DIR="${OMI_VOICE_COMPANION_DIR:-}"
+VOICE_SCRIPT="${OMI_VOICE_COMPANION_SCRIPT:-voice_companion.py}"
+DEVICE="${OMI_VOICE_COMPANION_DEVICE:-1}"
 
 if [[ -z "$PROJECT_DIR" ]]; then
   if [[ -d "$DEFAULT_HOME_PROJECT" ]]; then
@@ -14,7 +14,7 @@ if [[ -z "$PROJECT_DIR" ]]; then
   elif [[ -d "$DEFAULT_SIBLING_PROJECT" ]]; then
     PROJECT_DIR="$DEFAULT_SIBLING_PROJECT"
   else
-    echo "Could not find the voice assistant project. Set OMI_VOICE_ASSISTANT_DIR first." >&2
+    echo "Could not find the voice assistant project. Set OMI_VOICE_COMPANION_DIR first." >&2
     exit 1
   fi
 fi
