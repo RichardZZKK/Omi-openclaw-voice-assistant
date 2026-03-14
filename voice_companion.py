@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import pickle
 import os
 import subprocess
 import hashlib
@@ -185,6 +186,7 @@ TTS_BACKEND = os.getenv("OMI_VOICE_COMPANION_TTS_BACKEND", "auto").strip().lower
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY) if ELEVENLABS_API_KEY else None
 qwen_model = None
 qwen_model_loading = False
+qwen_voice_prompt = None
 
 
 def get_tts_cache_path(text: str, backend: str, suffix: str) -> Path:
@@ -227,6 +229,56 @@ def ensure_elevenlabs_audio(text: str) -> Path | None:
         return None
 
 
+def get_qwen_prompt_cache_path() -> Path:
+    key = "|".join([QWEN_TTS_MODEL, QWEN_TTS_REF_AUDIO, QWEN_TTS_REF_TEXT, str(QWEN_TTS_X_VECTOR_ONLY)])
+    digest = hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]
+    return CACHE_DIR / f"qwen-voice-prompt-{digest}.pkl"
+
+
+def load_qwen_voice_prompt(model):
+    global qwen_voice_prompt
+    if qwen_voice_prompt is not None:
+        return qwen_voice_prompt
+    if not QWEN_TTS_REF_AUDIO:
+        raise RuntimeError("QWEN_TTS_REF_AUDIO is not configured")
+
+    cache_path = get_qwen_prompt_cache_path()
+    try:
+        from qwen_tts import VoiceClonePromptItem
+        if cache_path.exists() and cache_path.stat().st_size > 0:
+            with open(cache_path, "rb") as handle:
+                raw_items = pickle.load(handle)
+            qwen_voice_prompt = [VoiceClonePromptItem(**item) for item in raw_items]
+            return qwen_voice_prompt
+    except Exception as exc:
+        print(f"Qwen prompt cache load error: {exc}")
+
+    kwargs = {"ref_audio": QWEN_TTS_REF_AUDIO}
+    if QWEN_TTS_REF_TEXT and not QWEN_TTS_X_VECTOR_ONLY:
+        kwargs["ref_text"] = QWEN_TTS_REF_TEXT
+    else:
+        kwargs["x_vector_only_mode"] = True
+
+    prompt_items = model.create_voice_clone_prompt(**kwargs)
+    raw_items = []
+    for item in prompt_items:
+        raw_items.append({
+            "ref_code": item.ref_code,
+            "ref_spk_embedding": item.ref_spk_embedding,
+            "x_vector_only_mode": item.x_vector_only_mode,
+            "icl_mode": item.icl_mode,
+            "ref_text": item.ref_text,
+        })
+    try:
+        CACHE_DIR.mkdir(exist_ok=True)
+        with open(cache_path, "wb") as handle:
+            pickle.dump(raw_items, handle)
+    except Exception as exc:
+        print(f"Qwen prompt cache save error: {exc}")
+    qwen_voice_prompt = prompt_items
+    return qwen_voice_prompt
+
+
 def load_qwen_tts_model():
     global qwen_model, qwen_model_loading
     if qwen_model is not None:
@@ -266,17 +318,13 @@ def ensure_qwen_audio(text: str) -> Path | None:
         import soundfile as sf
 
         model = load_qwen_tts_model()
-        kwargs = {
-            "text": clean,
-            "language": "chinese",
-            "ref_audio": QWEN_TTS_REF_AUDIO,
-            "non_streaming_mode": True,
-        }
-        if QWEN_TTS_REF_TEXT and not QWEN_TTS_X_VECTOR_ONLY:
-            kwargs["ref_text"] = QWEN_TTS_REF_TEXT
-        else:
-            kwargs["x_vector_only_mode"] = True
-        wavs, sr = model.generate_voice_clone(**kwargs)
+        voice_prompt = load_qwen_voice_prompt(model)
+        wavs, sr = model.generate_voice_clone(
+            text=clean,
+            language="chinese",
+            voice_clone_prompt=voice_prompt,
+            non_streaming_mode=True,
+        )
         sf.write(cache_path, wavs[0], sr)
         return cache_path
     except Exception as exc:
