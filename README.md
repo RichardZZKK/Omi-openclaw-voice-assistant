@@ -30,97 +30,59 @@ English version: [README_EN.md](./README_EN.md)
 - 系统可用 `swiftc`
 
 ## 安装
-下面这套步骤按顺序做，小白也可以直接照着执行。
-
-### 1. 打开终端
-在 macOS 里打开 `Terminal`。
-
-最常用的方法：
-- 按 `Command + Space`
-- 输入 `Terminal`
-- 回车
-
-### 2. 进入项目目录
-如果你已经把项目下载到本地，先进入项目目录：
+先把项目拉到本地：
 
 ```bash
-cd /你的项目路径/omi-voice-assistant
+git clone git@github.com:RichardZZKK/Omi-openclaw-voice-assistant.git
+cd Omi-openclaw-voice-assistant
 ```
 
-如果你已经在这个项目目录里，可以用下面命令确认：
+如果你更习惯 HTTPS，也可以用：
+
 ```bash
-pwd
-ls
+git clone https://github.com/RichardZZKK/Omi-openclaw-voice-assistant.git
+cd Omi-openclaw-voice-assistant
 ```
 
-你应该能看到这些文件：
-- `voice_assistant.py`
-- `voice_assistant_en.py`
-- `requirements.txt`
-
-### 3. 确认 Python 3 可用
-运行：
+确认 Python 3 可用：
 
 ```bash
 python3 --version
 ```
 
-如果看到类似：
-
-```bash
-Python 3.11.x
-```
-
-说明 Python 3 已经可用。
-
-如果这里报错，先安装 Python 3，再继续下面步骤。
-
-### 4. 确认 pip3 可用
-运行：
+确认 `pip3` 可用：
 
 ```bash
 pip3 --version
 ```
 
-如果能看到版本号，说明 `pip3` 可用。
-
-### 5. 安装依赖
-在项目目录里运行：
+安装依赖：
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-安装成功后，通常会看到类似：
-- `Successfully installed ...`
-
-### 6. 如果安装时报权限错误
-如果你看到类似 `Permission denied` 或 `externally-managed-environment`，优先用下面这个方式：
+如果安装时报权限错误，例如 `Permission denied` 或 `externally-managed-environment`，优先改用：
 
 ```bash
 python3 -m pip install --user -r requirements.txt
 ```
 
-这样会把依赖安装到你自己的用户目录里，通常更稳。
-
-### 7. 如果安装时报某个包失败
-你可以先升级 pip 再重试：
+如果安装时报某个包失败，可以先升级 `pip` 再重试：
 
 ```bash
 python3 -m pip install --upgrade pip
 python3 -m pip install --user -r requirements.txt
 ```
 
-### 8. 验证安装是否完成
-安装完后，你可以先测试列出麦克风设备：
+安装完成后，可以先测试麦克风设备列表：
 
 ```bash
 python3 voice_assistant.py --list-devices
 ```
 
-如果能看到设备列表，说明核心依赖基本已经装好了。
+如果能看到设备列表，说明核心依赖基本已经装好。
 
-### 9. 首次运行时的系统权限
 第一次运行语音助手时，macOS 可能会弹出权限请求。
 
 你需要允许：

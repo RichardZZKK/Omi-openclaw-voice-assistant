@@ -32,87 +32,52 @@ Note:
 - `swiftc` available
 
 ## Install
-Follow these steps in order. This section is written for first-time users.
-
-### 1. Open Terminal
-On macOS, open `Terminal`.
-
-The quickest way:
-- Press `Command + Space`
-- Type `Terminal`
-- Press Enter
-
-### 2. Go to the project folder
-If you already downloaded the project, move into the folder first:
+Clone the project first:
 
 ```bash
-cd /path/to/omi-voice-assistant
+git clone git@github.com:RichardZZKK/Omi-openclaw-voice-assistant.git
+cd Omi-openclaw-voice-assistant
 ```
 
-If you are not sure whether you are in the right folder, run:
+If you prefer HTTPS, you can use:
+
 ```bash
-pwd
-ls
+git clone https://github.com/RichardZZKK/Omi-openclaw-voice-assistant.git
+cd Omi-openclaw-voice-assistant
 ```
 
-You should see files like:
-- `voice_assistant.py`
-- `voice_assistant_en.py`
-- `requirements.txt`
-
-### 3. Check that Python 3 is available
-Run:
+Check that Python 3 is available:
 
 ```bash
 python3 --version
 ```
 
-If you see something like:
-
-```bash
-Python 3.11.x
-```
-
-then Python 3 is available.
-
-### 4. Check that pip3 is available
-Run:
+Check that `pip3` is available:
 
 ```bash
 pip3 --version
 ```
 
-If it shows a version number, `pip3` is ready.
-
-### 5. Install dependencies
-From the project folder, run:
+Install dependencies:
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-After a successful install, you will usually see:
-- `Successfully installed ...`
-
-### 6. If you get a permission error
-If you see something like `Permission denied` or `externally-managed-environment`, use:
+If you get a permission error such as `Permission denied` or `externally-managed-environment`, use:
 
 ```bash
 python3 -m pip install --user -r requirements.txt
 ```
 
-This installs packages into your user directory and is usually the safest option.
-
-### 7. If a package install fails
-Try upgrading pip first, then retry:
+If a package install fails, try upgrading `pip` first and then retry:
 
 ```bash
 python3 -m pip install --upgrade pip
 python3 -m pip install --user -r requirements.txt
 ```
 
-### 8. Verify the install
-After installation, test the microphone listing:
+After installation, verify the microphone listing:
 
 ```bash
 python3 voice_assistant.py --list-devices
@@ -120,7 +85,6 @@ python3 voice_assistant.py --list-devices
 
 If you can see your microphone devices, the core dependencies are likely installed correctly.
 
-### 9. macOS permissions on first run
 The first time you run the assistant, macOS may ask for permissions.
 
 Allow:
