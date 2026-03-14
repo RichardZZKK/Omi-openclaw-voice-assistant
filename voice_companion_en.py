@@ -257,7 +257,7 @@ def ensure_qwen_audio(text: str) -> Path | None:
         model = load_qwen_tts_model()
         kwargs = {
             "text": clean,
-            "language": "english" if path.name == "voice_companion_en.py" else "chinese",
+            "language": "english",
             "ref_audio": QWEN_TTS_REF_AUDIO,
             "non_streaming_mode": True,
         }
