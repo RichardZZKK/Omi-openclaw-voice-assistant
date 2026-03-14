@@ -1,47 +1,76 @@
-# Omi Voice Assistant
+# Omi OpenClaw Voice Assistant 中文语音助手
 
-A macOS local voice front-end for OpenClaw.
+一个运行在 macOS 上的本地语音前端，用来把语音输入接到 OpenClaw。
 
-## Features
-- Always-listening wake phrase detection (`hi omi`, `omi`, `欧米`)
-- Local speech recognition with macOS Speech.framework via Swift helpers
-- Voice activity detection for end-of-command capture
-- OpenClaw CLI integration through a dedicated voice session
-- ElevenLabs TTS with cache, with automatic fallback to macOS `say`
-- 5-second follow-up window after each reply for more natural conversations
+English version: [README_EN.md](./README_EN.md)
 
-## Requirements
+## 功能
+- 常驻监听唤醒词
+- 基于 macOS Speech.framework 的本地语音识别
+- 语音活动检测（VAD）自动结束录音
+- 通过独立语音会话调用 OpenClaw，避免复用无关上下文
+- ElevenLabs TTS 缓存播放，未配置时自动回退到 macOS `say`
+- 每次回答后保留 5 秒连续对话窗口，可直接追问
+
+## 环境要求
 - macOS
 - Python 3.11+
-- OpenClaw installed and working in the shell
-- Microphone permission granted to Terminal
-- `swiftc` available
+- 已安装并可正常使用的 OpenClaw
+- Terminal 已获得麦克风权限
+- 系统可用 `swiftc`
 
-## Install
+## 安装
 ```bash
 pip3 install -r requirements.txt
 ```
 
-## Configure
-Optional ElevenLabs support:
+## 可选配置
+如果你想使用 ElevenLabs 音色：
 ```bash
 export ELEVENLABS_API_KEY="your_key"
 export ELEVENLABS_VOICE_ID="your_voice_id"
 ```
 
-Without those variables, the assistant will fall back to macOS `say`.
+如果没有配置上述变量，项目会自动回退到 macOS `say`。
 
-## Run
-List microphones:
-```bash
-python3 voice_assistant.py --list-devices
-```
+## 脚本版本
+### 中文版
+文件：`voice_assistant.py`
 
-Start:
+默认特性：
+- 唤醒词：`hi omi` / `omi` / `欧米`
+- 中文优先转写
+- 更适合中文对话场景
+
+启动：
 ```bash
 python3 voice_assistant.py --device 1
 ```
 
-## Notes
-- The assistant keeps a dedicated OpenClaw voice session per run so it does not reuse unrelated chat context.
-- After each spoken reply, it stays in follow-up mode for 5 seconds so you can continue talking without a wake phrase.
+### 英文版
+文件：`voice_assistant_en.py`
+
+默认特性：
+- Wake phrases: `hi omi` / `hey omi` / `omi`
+- English-first transcription
+- Better suited for English conversations
+
+启动：
+```bash
+python3 voice_assistant_en.py --device 1
+```
+
+## 查看麦克风设备
+中文版：
+```bash
+python3 voice_assistant.py --list-devices
+```
+
+英文版：
+```bash
+python3 voice_assistant_en.py --list-devices
+```
+
+## 说明
+- 每次运行都会使用一个独立的 OpenClaw 语音会话，减少被旧聊天上下文带偏。
+- 语音回复结束后，会继续保留 5 秒追问窗口，这段时间里不需要再次说唤醒词。
