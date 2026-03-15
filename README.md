@@ -110,6 +110,21 @@ export QWEN_TTS_X_VECTOR_ONLY="true"
 - 如果你没有 `QWEN_TTS_REF_TEXT`，保持 `QWEN_TTS_X_VECTOR_ONLY=true` 即可
 - 如果既没有配置 ElevenLabs，也没有配置 Qwen，项目会自动回退到 macOS `say`
 
+如果你想把远程 Qwen3-TTS 后端接进当前语音伙伴：
+```bash
+export OMI_VOICE_COMPANION_TTS_BACKEND="remote-qwen"
+export OMI_VOICE_COMPANION_REMOTE_TTS_URL="http://your-tailscale-ip:8001"
+export OMI_VOICE_COMPANION_REMOTE_TTS_TIMEOUT="180"
+export OMI_VOICE_COMPANION_REMOTE_TTS_HEALTH_TIMEOUT="1.5"
+```
+
+说明：
+- `remote-qwen` 会先请求远程 `/health`
+- 如果远程后端在线，就走远程 Qwen3-TTS
+- 如果远程后端未启动或不可达，会自动回退到 ElevenLabs
+- 如果 ElevenLabs 也不可用，最后才会回退到 macOS `say`
+- 这样可以把 GPU 推理放到远程机器上，同时保留本地可用的降级链路
+
 ## 可选配置
 如果你想改伙伴名字、提示词或唤醒词，可以直接编辑脚本文件：
 

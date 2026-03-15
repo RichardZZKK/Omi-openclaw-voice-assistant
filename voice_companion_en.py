@@ -19,6 +19,8 @@ import subprocess
 import hashlib
 import tempfile
 import time
+import urllib.error
+import urllib.request
 import wave
 from collections import deque
 from enum import Enum
@@ -37,8 +39,23 @@ if HOMEBREW_BIN not in os.environ.get("PATH", ""):
 SAMPLE_RATE = 16_000
 CHANNELS = 1
 BLOCKSIZE = 1024
-WAKE_PHRASES = ("hi omi", "hey omi", "omi")
+WAKE_PHRASES = (
+    "hi omi",
+    "hey omi",
+    "omi",
+    "umi",
+    "homi",
+    "homie",
+    "call me",
+    "help me",
+    "wumi",
+    "oumi",
+    "hou mian",
+    "feng mi",
+)
 EXIT_PHRASES = ("stop listening", "quit assistant", "goodbye assistant", "exit assistant")
+FAST_HINT_TEXTS = {"我在", "我没有听清", "好的，再见", "让我想想", "I'm here", "I didn't catch that", "Okay, goodbye", "Let me think"}
+TTS_FAILURE_SOUND = os.getenv("OMI_VOICE_COMPANION_TTS_FAILURE_SOUND", "/System/Library/Sounds/Glass.aiff").strip()
 
 
 class State(Enum):
@@ -178,11 +195,16 @@ QWEN_TTS_MODEL = os.getenv("QWEN_TTS_MODEL", "Qwen/Qwen3-TTS-12Hz-0.6B-Base").st
 QWEN_TTS_REF_AUDIO = os.getenv("QWEN_TTS_REF_AUDIO", "").strip()
 QWEN_TTS_REF_TEXT = os.getenv("QWEN_TTS_REF_TEXT", "").strip()
 QWEN_TTS_X_VECTOR_ONLY = os.getenv("QWEN_TTS_X_VECTOR_ONLY", "true").strip().lower() in {"1", "true", "yes", "on"}
+REMOTE_TTS_BASE_URL = os.getenv("OMI_VOICE_COMPANION_REMOTE_TTS_URL", "").strip().rstrip("/")
+REMOTE_TTS_TIMEOUT = int(os.getenv("OMI_VOICE_COMPANION_REMOTE_TTS_TIMEOUT", "90").strip() or "90")
+REMOTE_TTS_HEALTH_TIMEOUT = float(os.getenv("OMI_VOICE_COMPANION_REMOTE_TTS_HEALTH_TIMEOUT", "1.5").strip() or "1.5")
 TTS_BACKEND = os.getenv("OMI_VOICE_COMPANION_TTS_BACKEND", "auto").strip().lower() or "auto"
 eleven_client = ElevenLabs(api_key=ELEVENLABS_API_KEY) if ELEVENLABS_API_KEY else None
 qwen_model = None
 qwen_model_loading = False
 qwen_voice_prompt = None
+remote_tts_health_ok = None
+remote_tts_health_checked_at = 0.0
 
 
 def get_tts_cache_path(text: str, backend: str, suffix: str) -> Path:
@@ -193,8 +215,10 @@ def get_tts_cache_path(text: str, backend: str, suffix: str) -> Path:
 
 
 def get_effective_tts_backend() -> str:
-    if TTS_BACKEND in {"say", "elevenlabs", "qwen"}:
+    if TTS_BACKEND in {"say", "elevenlabs", "qwen", "remote-qwen"}:
         return TTS_BACKEND
+    if REMOTE_TTS_BASE_URL:
+        return "remote-qwen"
     if ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID:
         return "elevenlabs"
     if QWEN_TTS_REF_AUDIO:
@@ -328,8 +352,57 @@ def ensure_qwen_audio(text: str) -> Path | None:
         return None
 
 
+def ensure_remote_tts_audio(text: str, language: str) -> Path | None:
+    clean = " ".join(text.split())
+    if not clean or not REMOTE_TTS_BASE_URL:
+        return None
+    cache_path = get_tts_cache_path(clean, f"remote-qwen-{language}", "wav")
+    if cache_path.exists() and cache_path.stat().st_size > 0:
+        return cache_path
+    payload = json.dumps({"text": clean, "language": language}).encode("utf-8")
+    request = urllib.request.Request(
+        f"{REMOTE_TTS_BASE_URL}/tts",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=REMOTE_TTS_TIMEOUT) as response:
+            audio = response.read()
+        cache_path.write_bytes(audio)
+        return cache_path
+    except urllib.error.URLError as exc:
+        print(f"Remote TTS request error: {exc}")
+        return None
+    except Exception as exc:
+        print(f"Remote TTS error: {exc}")
+        return None
+
+
+def is_remote_tts_available(force: bool = False) -> bool:
+    global remote_tts_health_ok, remote_tts_health_checked_at
+    if not REMOTE_TTS_BASE_URL:
+        return False
+    now = time.time()
+    if not force and remote_tts_health_ok is not None and now - remote_tts_health_checked_at < 15:
+        return remote_tts_health_ok
+    request = urllib.request.Request(f"{REMOTE_TTS_BASE_URL}/health", method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=REMOTE_TTS_HEALTH_TIMEOUT) as response:
+            remote_tts_health_ok = response.status == 200
+    except Exception:
+        remote_tts_health_ok = False
+    remote_tts_health_checked_at = now
+    return remote_tts_health_ok
+
+
 def ensure_tts_audio(text: str) -> Path | None:
     backend = get_effective_tts_backend()
+    if backend == "remote-qwen":
+        if is_remote_tts_available():
+            return ensure_remote_tts_audio(text, "english") or ensure_elevenlabs_audio(text)
+        print("Remote Qwen TTS backend is offline, falling back to ElevenLabs.")
+        return ensure_elevenlabs_audio(text)
     if backend == "elevenlabs":
         return ensure_elevenlabs_audio(text)
     if backend == "qwen":
@@ -337,18 +410,20 @@ def ensure_tts_audio(text: str) -> Path | None:
     return None
 
 
+def play_tts_failure_alert() -> None:
+    sound_path = Path(TTS_FAILURE_SOUND)
+    if sound_path.exists():
+        subprocess.run(["afplay", str(sound_path)], check=False)
+
+
 def speak(text: str, voice: str) -> None:
     """Speak with ElevenLabs when available, otherwise fall back to macOS say."""
     clean = " ".join(text.split())
     if not clean:
         return
+    backend = get_effective_tts_backend()
 
-    try:
-        subprocess.run(["osascript", "-e", "set volume output volume 60"], check=False)
-    except Exception:
-        pass
-
-    if clean in FAST_HINT_TEXTS:
+    if clean in FAST_HINT_TEXTS and backend not in {"qwen", "remote-qwen"}:
         subprocess.run(["say", "-v", voice, clean], check=False)
         return
 
@@ -358,6 +433,10 @@ def speak(text: str, voice: str) -> None:
             raise RuntimeError("failed to build TTS audio")
         subprocess.run(["afplay", str(cache_path)], check=True)
     except Exception as e:
+        if backend in {"qwen", "remote-qwen"} and eleven_client is None:
+            print(f"TTS error: {e}")
+            play_tts_failure_alert()
+            return
         print(f"TTS error: {e}, falling back to say")
         subprocess.run(["say", "-v", voice, clean], check=False)
 
@@ -365,6 +444,19 @@ def speak(text: str, voice: str) -> None:
 def speak_hint(text: str, voice: str) -> subprocess.Popen[bytes] | None:
     clean = " ".join(text.split())
     if not clean:
+        return None
+    backend = get_effective_tts_backend()
+    if backend in {"qwen", "remote-qwen"}:
+        try:
+            cache_path = ensure_tts_audio(clean)
+            if cache_path is not None:
+                return subprocess.Popen(
+                    ["afplay", str(cache_path)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+        except Exception as exc:
+            print(f"TTS hint error: {exc}")
         return None
     try:
         cache_path = ensure_elevenlabs_audio(clean)
@@ -572,6 +664,10 @@ def main() -> None:
     backend = get_effective_tts_backend()
     if backend == "elevenlabs":
         print(f"ℹ️ Current TTS: ElevenLabs ({ELEVENLABS_MODEL_ID})")
+    elif backend == "remote-qwen":
+        print(f"ℹ️ Current TTS: Remote Qwen3-TTS ({REMOTE_TTS_BASE_URL})")
+        if not is_remote_tts_available(force=True):
+            print("⚠️ Remote Qwen TTS is offline. The assistant will automatically fall back to ElevenLabs.")
     elif backend == "qwen":
         print(f"ℹ️ Current TTS: Qwen3-TTS ({QWEN_TTS_MODEL})")
     else:

@@ -96,6 +96,21 @@ Getting an API key is simple:
 You can also choose, create, or clone the voice you want here:
 - [https://elevenlabs.io](https://elevenlabs.io)
 
+If you want to use a remote Qwen3-TTS backend:
+```bash
+export OMI_VOICE_COMPANION_TTS_BACKEND="remote-qwen"
+export OMI_VOICE_COMPANION_REMOTE_TTS_URL="http://your-tailscale-ip:8001"
+export OMI_VOICE_COMPANION_REMOTE_TTS_TIMEOUT="180"
+export OMI_VOICE_COMPANION_REMOTE_TTS_HEALTH_TIMEOUT="1.5"
+```
+
+Notes:
+- `remote-qwen` checks the remote `/health` endpoint first
+- if the remote backend is online, it uses remote Qwen3-TTS
+- if the remote backend is offline or unreachable, it automatically falls back to ElevenLabs
+- if ElevenLabs is also unavailable, it finally falls back to macOS `say`
+- this lets you move GPU-heavy inference to another machine while keeping a safe local fallback chain
+
 ## Optional configuration
 If you want to change the companion name, prompts, or wake phrases, edit the script files directly:
 
